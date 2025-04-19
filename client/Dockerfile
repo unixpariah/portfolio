@@ -6,4 +6,8 @@ COPY . .
 
 RUN bun install
 
-CMD ["bun", "dev"]
+RUN bun run build
+
+CMD ["bun", "run", "start"]
+
+EXPOSE 3000

@@ -6,7 +6,7 @@ import { type DialogProps } from "@radix-ui/react-dialog";
 import { Circle, File, Laptop, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
-import { docsConfig } from "@/config/docs";
+import { docsConfig, MainNavItem } from "@/config/docs";
 import { cn } from "@/lib/utils";
 import {
   CommandDialog,
@@ -55,7 +55,7 @@ export function CommandMenu({ ...props }: DialogProps) {
       <Button
         variant="outline"
         className={cn(
-          "relative h-8 w-full justify-start rounded-[0.5rem] bg-muted/50 text-sm font-normal text-muted-foreground shadow-none sm:pr-12 md:w-40 lg:w-56 xl:w-64"
+          "relative h-8 w-full justify-start rounded-[0.5rem] bg-muted/50 text-sm font-normal text-muted-foreground shadow-none sm:pr-12 md:w-40 lg:w-56 xl:w-64",
         )}
         onClick={() => setOpen(true)}
         {...props}
@@ -72,7 +72,7 @@ export function CommandMenu({ ...props }: DialogProps) {
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Links">
             {docsConfig.mainNav
-              .filter((navitem: any) => !navitem.external)
+              .filter((navitem: MainNavItem) => !navitem.external)
               .map((navItem) => (
                 <CommandItem
                   key={navItem.href}

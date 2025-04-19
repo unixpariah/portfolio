@@ -17,6 +17,7 @@ import {
 import { ModeSwitcher } from "./mode-switcher";
 import { siteConfig } from "@/config/site";
 import { Icons } from "./icons";
+import { NavItem } from "./side-nav";
 
 export function MobileNav() {
   const [open, setOpen] = React.useState(false);
@@ -93,7 +94,7 @@ export function MobileNav() {
                 <div key={index} className="flex flex-col gap-4 pt-6">
                   <h4 className="text-xl font-medium">{item.title}</h4>
                   {item?.items?.length &&
-                    item.items.map((item: any) => (
+                    item.items.map((item: NavItem) => (
                       <React.Fragment key={item.href}>
                         {!item.disabled &&
                           (item.href ? (

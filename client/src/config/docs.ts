@@ -1,3 +1,9 @@
+export type MainNavItem = {
+  title: string;
+  href: string;
+  external?: boolean;
+};
+
 export const docsConfig = {
   mainNav: [
     {
@@ -43,11 +49,6 @@ export const docsConfig = {
           href: "/education",
           items: [],
         },
-        // {
-        //   title: "Testimonials",
-        //   href: "/testimonials",
-        //   items: [],
-        // },
         {
           title: "Contact",
           href: "/contact",
