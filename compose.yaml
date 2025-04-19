@@ -23,8 +23,20 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
-  server: &rust-service
-    build: ./server
+  client:
+    image: ghcr.io/unixpariah/portfolio-client:prod
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - web
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.client.entrypoints=web
+      - traefik.http.routers.client.rule=Host(`app.localhost`)
+      - traefik.http.services.client.loadbalancer.server.port=3000
+
+  server:
+    image: ghcr.io/unixpariah/portfolio-server:prod
     volumes:
       - ./server:/usr/src/app:delegated
     secrets:
