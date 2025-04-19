@@ -41,6 +41,15 @@
               ))
               rust-analyzer-unwrapped
               bun
+              podman-compose
+              sqlx-cli
+              openssl
+              pkg-config
+              tailwindcss
+              tailwindcss-language-server
+              vscode-langservers-extracted
+              prettierd
+              typescript-language-server
             ];
 
             shellHook = ''

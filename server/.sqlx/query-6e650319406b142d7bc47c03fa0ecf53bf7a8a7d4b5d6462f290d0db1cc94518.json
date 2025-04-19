@@ -1,0 +1,28 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT language, usage\n            FROM project_languages\n            WHERE project_id = $1\n            ORDER BY usage DESC\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "language",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 1,
+        "name": "usage",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "6e650319406b142d7bc47c03fa0ecf53bf7a8a7d4b5d6462f290d0db1cc94518"
+}

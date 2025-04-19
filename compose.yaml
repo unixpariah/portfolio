@@ -14,10 +14,28 @@ services:
     networks:
       - web
 
-  auth-service: &rust-service
-    image: ghcr.io/unixpariah/portfolio-server:prod
+  watchtower:
+    image: containrrr/watchtower
+    command:
+      - "--label-enable"
+      - "--interval"
+      - "30"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  server: &rust-service
+    build: ./server
     volumes:
       - ./server:/usr/src/app:delegated
+    secrets:
+      - github_api
+    develop:
+      watch:
+        - action: rebuild
+          path: ./server
+          target: /app
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     environment:
       - DATABASE_URL=postgres://user:password@db:5432/db?sslmode=disable
     networks:
@@ -51,10 +69,7 @@ services:
       - web
 
 volumes:
-  cargo-cache:
   database:
-  auth-service-target:
-  client-target:
 
 networks:
   web:
@@ -62,7 +77,5 @@ networks:
     driver: bridge
 
 secrets:
-  jwt_secret:
-    file: ./secrets/jwt_secret.txt
-  master_password:
-    file: ./secrets/master_password.txt
+  github_api:
+    file: /home/unixpariah/.config/sops-nix/secrets/github-api
