@@ -37,5 +37,6 @@ jobs:
         with:
           context: ./client
           file: ./client/Dockerfile
+          target: production 
           push: true
           tags: ghcr.io/unixpariah/portfolio-client:prod
