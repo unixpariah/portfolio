@@ -13,3 +13,16 @@ CREATE TABLE project_languages (
     usage INTEGER NOT NULL,
     FOREIGN KEY (project_id) REFERENCES projects(id)
 );
+
+CREATE TABLE stats (
+    id INTEGER PRIMARY KEY DEFAULT 1,
+    name TEXT NOT NULL,
+    bio TEXT,
+    avatar_url TEXT NOT NULL,
+    company TEXT,
+    public_repos INTEGER NOT NULL,
+    followers INTEGER NOT NULL,
+    following INTEGER NOT NULL,
+    location TEXT NOT NULL,
+    hireable BOOLEAN NOT NULL
+);

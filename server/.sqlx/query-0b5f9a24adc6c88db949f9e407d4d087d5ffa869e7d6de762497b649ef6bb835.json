@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO stats (id, name, bio, avatar_url, company, public_repos, followers, following, location, hireable)\n        VALUES (1, $1, $2, $3, $4, $5, $6, $7, $8, $9)\n        ON CONFLICT (id) DO UPDATE SET\n            name = EXCLUDED.name,\n            bio = EXCLUDED.bio,\n            avatar_url = EXCLUDED.avatar_url,\n            company = EXCLUDED.company,\n            public_repos = EXCLUDED.public_repos,\n            followers = EXCLUDED.followers,\n            following = EXCLUDED.following,\n            location = EXCLUDED.location,\n            hireable = EXCLUDED.hireable\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Int4",
+        "Int4",
+        "Int4",
+        "Text",
+        "Bool"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "0b5f9a24adc6c88db949f9e407d4d087d5ffa869e7d6de762497b649ef6bb835"
+}

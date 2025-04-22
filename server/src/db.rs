@@ -1,14 +1,18 @@
-use crate::Project;
+use crate::{Project, Stats};
 use actix_web::error;
 use sqlx::{PgPool, error::Error as SqlxError};
 
 pub enum Query {
+    GetStats,
+    UpdateStats(Stats),
     UpdateProjects(Vec<Project>),
     GetProjects,
 }
 
 #[derive(Debug)]
 pub enum DbAction {
+    StatsUpdated,
+    StatsRetrieved(Stats),
     ProjectsUpdated,
     ProjectsRetrieved(Vec<Project>),
 }
@@ -17,8 +21,57 @@ pub async fn execute(pool: &PgPool, query: Query) -> Result<DbAction, actix_web:
     let result = match query {
         Query::UpdateProjects(projects) => update_projects(pool, projects).await,
         Query::GetProjects => get_projects(pool).await,
+        Query::UpdateStats(stats) => update_stats(pool, stats).await,
+        Query::GetStats => get_stats(pool).await,
     };
     result.map_err(error::ErrorInternalServerError)
+}
+
+async fn get_stats(pool: &PgPool) -> Result<DbAction, SqlxError> {
+    let stats = sqlx::query_as!(
+        Stats,
+        r#"
+            SELECT name, bio, avatar_url, company, public_repos, followers, following, location, hireable
+            FROM stats
+            LIMIT 1
+        "#
+    )
+    .fetch_one(pool)
+    .await?;
+
+    Ok(DbAction::StatsRetrieved(stats))
+}
+
+async fn update_stats(pool: &PgPool, stats: Stats) -> Result<DbAction, SqlxError> {
+    sqlx::query!(
+        r#"
+        INSERT INTO stats (id, name, bio, avatar_url, company, public_repos, followers, following, location, hireable)
+        VALUES (1, $1, $2, $3, $4, $5, $6, $7, $8, $9)
+        ON CONFLICT (id) DO UPDATE SET
+            name = EXCLUDED.name,
+            bio = EXCLUDED.bio,
+            avatar_url = EXCLUDED.avatar_url,
+            company = EXCLUDED.company,
+            public_repos = EXCLUDED.public_repos,
+            followers = EXCLUDED.followers,
+            following = EXCLUDED.following,
+            location = EXCLUDED.location,
+            hireable = EXCLUDED.hireable
+        "#,
+        stats.name,
+        stats.bio,
+        stats.avatar_url,
+        stats.company,
+        stats.public_repos,
+        stats.followers,
+        stats.following,
+        stats.location,
+        stats.hireable
+    )
+    .execute(pool)
+    .await?;
+
+    Ok(DbAction::StatsUpdated)
 }
 
 async fn get_projects(pool: &PgPool) -> Result<DbAction, SqlxError> {
@@ -51,7 +104,7 @@ async fn get_projects(pool: &PgPool) -> Result<DbAction, SqlxError> {
             .into_iter()
             .map(|lang| crate::Language {
                 name: lang.language,
-                line_count: lang.usage as i64,
+                line_count: lang.usage,
             })
             .collect();
 

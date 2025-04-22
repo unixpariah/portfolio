@@ -16,6 +16,19 @@ use sqlx::{PgPool, postgres::PgPoolOptions};
 use std::{sync::LazyLock, time::Duration};
 
 #[derive(Debug, Serialize)]
+struct Stats {
+    name: String,
+    bio: Option<String>,
+    avatar_url: String,
+    company: Option<String>,
+    public_repos: i32,
+    followers: i32,
+    following: i32,
+    location: String,
+    hireable: bool,
+}
+
+#[derive(Debug, Serialize)]
 struct Project {
     id: i32,
     name: String,
@@ -29,7 +42,7 @@ struct Project {
 #[derive(Debug, Serialize)]
 pub struct Language {
     pub name: String,
-    pub line_count: i64,
+    pub line_count: i32,
 }
 
 static SECRET: LazyLock<String> = LazyLock::new(|| {
@@ -39,6 +52,15 @@ static SECRET: LazyLock<String> = LazyLock::new(|| {
     assert!(!secret.is_empty(), "Github api token must not be empty");
     secret.to_string()
 });
+
+#[get("/stats")]
+async fn get_stats(pool: web::Data<PgPool>) -> Result<HttpResponse, actix_web::Error> {
+    let db::DbAction::StatsRetrieved(stats) = db::execute(&pool, db::Query::GetStats).await? else {
+        return HttpResponse::Ok().await;
+    };
+
+    Ok(HttpResponse::Ok().json(stats))
+}
 
 #[get("/projects")]
 async fn get_projects(pool: web::Data<PgPool>) -> Result<HttpResponse, actix_web::Error> {
@@ -75,93 +97,159 @@ async fn main() -> std::io::Result<()> {
 
             loop {
                 interval.tick().await;
-                let res = client
-                    .get("https://api.github.com/users/unixpariah/repos")
-                    .header("Accept", "application/vnd.github+json")
-                    .header("Authorization", format!("Bearer {}", SECRET.as_str()))
-                    .header("User-Agent", "portfolio")
-                    .send()
-                    .await;
 
-                if let Ok(response) = res {
-                    if let Ok(json) = response.json::<Value>().await {
-                        if let Some(repos) = json.as_array() {
-                            let futures = repos.iter().filter_map(|repo| {
+                let (repos_response, stats_response) = tokio::join!(
+                    client
+                        .get("https://api.github.com/users/unixpariah/repos")
+                        .header("Accept", "application/vnd.github+json")
+                        .header("Authorization", format!("Bearer {}", SECRET.as_str()))
+                        .header("User-Agent", "portfolio")
+                        .send(),
+                    client
+                        .get("https://api.github.com/users/unixpariah")
+                        .header("Authorization", format!("Bearer {}", SECRET.as_str()))
+                        .header("User-Agent", "portfolio")
+                        .send()
+                );
+
+                if let (Ok(repos_res), Ok(stats_res)) = (repos_response, stats_response) {
+                    match repos_res.json::<Value>().await {
+                        Ok(Value::Array(repos)) => {
+                            let project_futures = repos.iter().filter_map(|repo| {
+                                if repo.get("fork").and_then(|v| v.as_bool()).unwrap_or(false) {
+                                    return None;
+                                }
+
                                 let client = client.clone();
                                 let secret = SECRET.clone();
 
-                                if let Some(fork) = repo.get("fork") {
-                                    if fork.as_bool().unwrap() {
-                                        return None;
-                                    }
-                                }
+                                Some(async move {
+                                    let (id, name, desc, stars, url, homepage) = (
+                                        repo.get("id")
+                                            .and_then(|v| v.as_i64())
+                                            .map(|v| v as i32)?,
+                                        repo.get("name").and_then(|v| v.as_str())?,
+                                        repo.get("description").and_then(|v| v.as_str())?,
+                                        repo.get("stargazers_count")
+                                            .and_then(|v| v.as_i64())
+                                            .map(|v| v as i32)?,
+                                        repo.get("html_url").and_then(|v| v.as_str())?,
+                                        repo.get("homepage").and_then(|v| v.as_str()),
+                                    );
 
-                                if let (Some(id), Some(name), Some(description), Some(stars), Some(url), Some(homepage)) = (
-                                    repo.get("id").and_then(|v| v.as_i64().map(|v| v as i32)),
-                                    repo.get("name"),
-                                    repo.get("description"),
-                                    repo.get("stargazers_count")
-                                        .and_then(|v| v.as_i64().map(|v| v as i32)),
-                                    repo.get("html_url"),
-                                    repo.get("homepage")
-                                ) {
-                                    Some(async move {
-                                        let name_str = name.as_str().unwrap_or_default();
-                                        let Ok(res) = client
-                                            .get(format!("https://api.github.com/repos/unixpariah/{}/languages", name_str))
-                                            .header("Authorization", format!("Bearer {}", secret))
-                                            .header("User-Agent", "portfolio")
-                                            .send()
-                                            .await else {
-                                            return None;
-                                        };
+                                    // Get languages
+                                    let lang_res = client
+                                        .get(format!(
+                                            "https://api.github.com/repos/unixpariah/{}/languages",
+                                            name
+                                        ))
+                                        .header("Authorization", format!("Bearer {}", secret))
+                                        .header("User-Agent", "portfolio")
+                                        .send()
+                                        .await
+                                        .ok()?;
 
-                                        let Ok(mut json) = res.json::<Value>().await else {
-                                            return None;
-                                        };
+                                    let mut lang_json = lang_res.json::<Value>().await.ok()?;
+                                    let languages = if let Value::Object(map) = lang_json.take() {
+                                        map.into_iter()
+                                            .map(|(k, v)| Language {
+                                                name: k,
+                                                line_count: v
+                                                    .as_i64()
+                                                    .map(|v| v as i32)
+                                                    .unwrap_or_default(),
+                                            })
+                                            .collect()
+                                    } else {
+                                        Vec::new()
+                                    };
 
-                                        let languages = match json.take() {
-                                            Value::Object(map) => map
-                                                .into_iter()
-                                                .map(|(k, v)| Language {name: k, line_count: v.as_i64().unwrap_or_default()})
-                                                .collect::<Vec<_>>(),
-                                            _ => Vec::new(),
-                                        };
-
-                                        let homepage = match homepage {
-                                                Value::String(s) if !s.trim().is_empty() => Some(s.clone()),
-                                                _ => None
-                                            };
-
-
-                                        Some(Project {
-                                            id,
-                                            name: name.to_string(),
-                                            description: description.to_string(),
-                                            stars,
-                                            languages,
-                                            url: url.to_string(),
-                                            homepage,
-                                        })
+                                    Some(Project {
+                                        id,
+                                        name: name.to_string(),
+                                        description: desc.to_string(),
+                                        stars,
+                                        languages,
+                                        url: url.to_string(),
+                                        homepage: homepage
+                                            .filter(|s| !s.is_empty())
+                                            .map(String::from),
                                     })
-                                } else {
-                                    None
-                                }
+                                })
                             });
 
-                            let projects: Vec<Project> = future::join_all(futures)
+                            let projects = future::join_all(project_futures)
                                 .await
                                 .into_iter()
                                 .flatten()
-                                .collect();
+                                .collect::<Vec<_>>();
 
                             if let Err(e) =
                                 db::execute(&pool, db::Query::UpdateProjects(projects)).await
                             {
-                                log::error!("{e}");
+                                log::error!("Failed to update projects: {}", e);
                             }
                         }
+                        Ok(_) => log::warn!("Unexpected repositories response format"),
+                        Err(e) => log::error!("Failed to parse repositories: {}", e),
                     }
+
+                    match stats_res.json::<Value>().await {
+                        Ok(stats_json) => {
+                            let stats = Stats {
+                                name: stats_json
+                                    .get("name")
+                                    .and_then(|v| v.as_str())
+                                    .unwrap_or_default()
+                                    .to_string(),
+                                bio: stats_json
+                                    .get("bio")
+                                    .and_then(|v| v.as_str())
+                                    .map(String::from),
+                                avatar_url: stats_json
+                                    .get("avatar_url")
+                                    .and_then(|v| v.as_str())
+                                    .unwrap_or_default()
+                                    .to_string(),
+                                company: stats_json
+                                    .get("company")
+                                    .and_then(|v| v.as_str())
+                                    .map(String::from),
+                                public_repos: stats_json
+                                    .get("public_repos")
+                                    .and_then(|v| v.as_i64())
+                                    .map(|v| v as i32)
+                                    .unwrap_or_default(),
+                                followers: stats_json
+                                    .get("followers")
+                                    .and_then(|v| v.as_i64())
+                                    .map(|v| v as i32)
+                                    .unwrap_or_default(),
+                                following: stats_json
+                                    .get("following")
+                                    .and_then(|v| v.as_i64())
+                                    .map(|v| v as i32)
+                                    .unwrap_or_default(),
+                                location: stats_json
+                                    .get("location")
+                                    .and_then(|v| v.as_str())
+                                    .unwrap_or_default()
+                                    .to_string(),
+                                hireable: stats_json
+                                    .get("hireable")
+                                    .and_then(|v| v.as_bool())
+                                    .unwrap_or(false),
+                            };
+
+                            if let Err(e) = db::execute(&pool, db::Query::UpdateStats(stats)).await
+                            {
+                                log::error!("Failed to update stats: {}", e);
+                            }
+                        }
+                        Err(e) => log::error!("Failed to parse stats: {}", e),
+                    }
+                } else {
+                    log::error!("Failed to fetch initial data");
                 }
             }
         });
@@ -196,6 +284,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(middleware::Logger::default())
             .wrap(cors)
             .service(get_projects)
+            .service(get_stats)
     })
     .bind(("0.0.0.0", 8000))?
     .workers(2)

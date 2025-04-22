@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import { getGitHubStatsServerAction } from "../actions/getGitHubStatsServerAction";
 import GitHubGraphs from "./GitHubGraphs";
 
 const StatCard = ({
