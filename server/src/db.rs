@@ -22,23 +22,19 @@ pub async fn execute(pool: &PgPool, query: Query) -> Result<DbAction, actix_web:
 }
 
 async fn get_projects(pool: &PgPool) -> Result<DbAction, SqlxError> {
-    // First, fetch all projects
     let projects_without_languages = sqlx::query!(
         r#"
-        SELECT id, name, description, stars
+        SELECT id, name, description, stars, url, homepage
         FROM projects
         ORDER BY stars DESC
         "#
     )
     .fetch_all(pool)
     .await?;
-    
-    // Then create the vector for our final projects with languages
+
     let mut projects = Vec::with_capacity(projects_without_languages.len());
-    
-    // For each project, fetch its languages and build the complete Project struct
+
     for project_row in projects_without_languages {
-        // Fetch languages for this project
         let languages = sqlx::query!(
             r#"
             SELECT language, usage
@@ -50,52 +46,56 @@ async fn get_projects(pool: &PgPool) -> Result<DbAction, SqlxError> {
         )
         .fetch_all(pool)
         .await?;
-        
-        // Convert database rows to the expected format
+
         let language_tuples = languages
             .into_iter()
-            .map(|lang| (lang.language, lang.usage as i64))
+            .map(|lang| crate::Language {
+                name: lang.language,
+                line_count: lang.usage as i64,
+            })
             .collect();
-        
-        // Construct the complete Project with languages
+
         let project = Project {
             id: project_row.id,
             name: project_row.name,
             description: project_row.description,
             stars: project_row.stars,
             languages: language_tuples,
+            url: project_row.url,
+            homepage: project_row.homepage,
         };
-        
+
         projects.push(project);
     }
-    
+
     Ok(DbAction::ProjectsRetrieved(projects))
 }
 
 async fn update_projects(pool: &PgPool, projects: Vec<Project>) -> Result<DbAction, SqlxError> {
-    // Use a transaction to ensure atomicity
     let mut tx = pool.begin().await?;
-    
+
     for project in projects {
-        // Insert or update the project first
         sqlx::query!(
             r#"
-            INSERT INTO projects (id, name, description, stars)
-            VALUES ($1, $2, $3, $4)
+            INSERT INTO projects (id, name, description, stars, url, homepage)
+            VALUES ($1, $2, $3, $4, $5, $6)
             ON CONFLICT (id) DO UPDATE
             SET name = EXCLUDED.name,
                 description = EXCLUDED.description,
-                stars = EXCLUDED.stars
+                stars = EXCLUDED.stars,
+                url = EXCLUDED.url,
+                homepage = EXCLUDED.homepage
             "#,
             project.id,
             project.name,
             project.description,
             project.stars,
+            project.url,
+            project.homepage,
         )
         .execute(&mut *tx)
         .await?;
-        
-        // First, delete existing languages for this project to avoid duplicates
+
         sqlx::query!(
             r#"
             DELETE FROM project_languages 
@@ -105,25 +105,23 @@ async fn update_projects(pool: &PgPool, projects: Vec<Project>) -> Result<DbActi
         )
         .execute(&mut *tx)
         .await?;
-        
-        // Then insert all languages for this project
-        for (language, usage) in project.languages {
+
+        for language in project.languages {
             sqlx::query!(
                 r#"
                 INSERT INTO project_languages (project_id, language, usage)
                 VALUES ($1, $2, $3)
                 "#,
                 project.id,
-                language,
-                usage as i32,  // Assuming your DB column is INTEGER
+                language.name,
+                language.line_count as i32,
             )
             .execute(&mut *tx)
             .await?;
         }
     }
-    
-    // Commit the transaction
+
     tx.commit().await?;
-    
+
     Ok(DbAction::ProjectsUpdated)
 }

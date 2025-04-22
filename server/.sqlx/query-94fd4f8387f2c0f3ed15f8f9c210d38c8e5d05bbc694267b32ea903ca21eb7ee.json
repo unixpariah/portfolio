@@ -1,0 +1,19 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO projects (id, name, description, stars, url, homepage)\n            VALUES ($1, $2, $3, $4, $5, $6)\n            ON CONFLICT (id) DO UPDATE\n            SET name = EXCLUDED.name,\n                description = EXCLUDED.description,\n                stars = EXCLUDED.stars,\n                url = EXCLUDED.url,\n                homepage = EXCLUDED.homepage\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Text",
+        "Text",
+        "Int4",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "94fd4f8387f2c0f3ed15f8f9c210d38c8e5d05bbc694267b32ea903ca21eb7ee"
+}

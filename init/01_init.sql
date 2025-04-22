@@ -2,7 +2,9 @@ CREATE TABLE projects (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     description TEXT NOT NULL,
-    stars INTEGER NOT NULL
+    stars INTEGER NOT NULL,
+    url TEXT NOT NULL,
+    homepage TEXT
 );
 
 CREATE TABLE project_languages (

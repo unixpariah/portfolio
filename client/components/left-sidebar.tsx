@@ -1,16 +1,25 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { cn } from "@/lib/utils"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Briefcase, Code, Contact, GraduationCap, Home, BarChart, PenToolIcon as Tool, User } from "lucide-react"
+import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  Briefcase,
+  Code,
+  Contact,
+  GraduationCap,
+  Home,
+  BarChart,
+  PenToolIcon as Tool,
+  User,
+} from "lucide-react";
 
 interface NavItem {
-  title: string
-  href: string
-  icon: React.ReactNode
+  title: string;
+  href: string;
+  icon: React.ReactNode;
 }
 
 const navItems: NavItem[] = [
@@ -54,14 +63,14 @@ const navItems: NavItem[] = [
     href: "/stats",
     icon: <BarChart className="h-4 w-4" />,
   },
-]
+];
 
 interface LeftSidebarProps {
-  open?: boolean
+  open?: boolean;
 }
 
 export default function LeftSidebar({ open = true }: LeftSidebarProps) {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <aside
@@ -78,7 +87,9 @@ export default function LeftSidebar({ open = true }: LeftSidebarProps) {
               href={item.href}
               className={cn(
                 "flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
-                pathname === item.href ? "bg-accent text-accent-foreground" : "text-muted-foreground",
+                pathname === item.href
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground",
               )}
             >
               {item.icon}
@@ -88,5 +99,5 @@ export default function LeftSidebar({ open = true }: LeftSidebarProps) {
         </nav>
       </div>
     </aside>
-  )
+  );
 }

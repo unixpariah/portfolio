@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT id, name, description, stars\n        FROM projects\n        ORDER BY stars DESC\n        ",
+  "query": "\n        SELECT id, name, description, stars, url, homepage\n        FROM projects\n        ORDER BY stars DESC\n        ",
   "describe": {
     "columns": [
       {
@@ -22,6 +22,16 @@
         "ordinal": 3,
         "name": "stars",
         "type_info": "Int4"
+      },
+      {
+        "ordinal": 4,
+        "name": "url",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "homepage",
+        "type_info": "Text"
       }
     ],
     "parameters": {
@@ -31,8 +41,10 @@
       false,
       false,
       false,
-      false
+      false,
+      false,
+      true
     ]
   },
-  "hash": "01f4a39124a62cac141d2251c9ab3779f23a4b116d774309fe4cb9a6b1e811b5"
+  "hash": "b8e6483cccfc59d9716ba17705132681a5bb3544d51f5145b01f707f25cd125c"
 }
