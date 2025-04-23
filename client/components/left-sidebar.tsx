@@ -8,7 +8,6 @@ import { usePathname } from "next/navigation";
 import {
   Briefcase,
   Code,
-  Contact,
   GraduationCap,
   Home,
   BarChart,
@@ -52,11 +51,6 @@ const navItems: NavItem[] = [
     title: "Education",
     href: "/education",
     icon: <GraduationCap className="h-4 w-4" />,
-  },
-  {
-    title: "Contact",
-    href: "/contact",
-    icon: <Contact className="h-4 w-4" />,
   },
   {
     title: "Stats",

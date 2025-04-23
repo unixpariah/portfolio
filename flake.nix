@@ -45,7 +45,6 @@
               sqlx-cli
               openssl
               pkg-config
-              tailwindcss
               tailwindcss-language-server
               vscode-langservers-extracted
               prettierd

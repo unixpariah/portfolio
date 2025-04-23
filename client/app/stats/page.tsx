@@ -34,65 +34,74 @@ interface Stats {
   location: string;
 }
 
-const Stats = async () => {
-  const res = await fetch("http://localhost:8000/stats");
-  const stats: Stats = await res.json();
+export default async function Stats() {
+  try {
+    const res = await fetch("http://server:8000/stats");
+    if (!res.ok) throw new Error("Failed to fetch stats");
 
-  const githubStatCards = [
-    {
-      title: "Hireable",
-      value: stats.hireable ? "Yes" : "No",
-      className: stats.hireable ? "bg-green-500/20" : "",
-    },
-    {
-      title: "Total Public Repositories",
-      value: stats.public_repos || 0,
-    },
-    {
-      title: "Followers",
-      value: stats.followers || 0,
-    },
-    {
-      title: "Following",
-      value: stats.following || 0,
-    },
-    {
-      title: "Current Company",
-      value: stats.company || "N/A",
-    },
-    {
-      title: "Location",
-      value: stats.location || "N/A",
-    },
-  ];
+    const stats: Stats = await res.json();
 
-  return (
-    <>
-      <div className="py-10">
-        <h1 className="text-4xl font-bold">GitHub Stats</h1>
-        <h2 className="text-4xl font-bold text-muted-foreground">
-          Insights and metrics about my GitHub profile
-        </h2>
-      </div>
+    const githubStatCards = [
+      {
+        title: "Hireable",
+        value: stats.hireable ? "Yes" : "No",
+        className: stats.hireable ? "bg-green-500/20" : "",
+      },
+      {
+        title: "Total Public Repositories",
+        value: stats.public_repos || 0,
+      },
+      {
+        title: "Followers",
+        value: stats.followers || 0,
+      },
+      {
+        title: "Following",
+        value: stats.following || 0,
+      },
+      {
+        title: "Current Company",
+        value: stats.company || "N/A",
+      },
+      {
+        title: "Location",
+        value: stats.location || "N/A",
+      },
+    ];
 
-      <div className="flex items-center justify-center w-full p-4 mb-8 border border-border/40 rounded-xl">
-        <GitHubGraphs />
-      </div>
-
-      <div className="mb-8">
-        <div className="grid grid-cols-1 gap-4 card-container md:grid-cols-3">
-          {githubStatCards.map((card, index) => (
-            <StatCard
-              key={index}
-              title={card.title}
-              value={card.value}
-              className={card.className}
-            />
-          ))}
+    return (
+      <>
+        <div className="py-10">
+          <h1 className="text-4xl font-bold">GitHub Stats</h1>
+          <h2 className="text-4xl font-bold text-muted-foreground">
+            Insights and metrics about my GitHub profile
+          </h2>
         </div>
-      </div>
-    </>
-  );
-};
 
-export default Stats;
+        <div className="flex items-center justify-center w-full p-4 mb-8 border border-border/40 rounded-xl">
+          <GitHubGraphs />
+        </div>
+
+        <div className="mb-8">
+          <div className="grid grid-cols-1 gap-4 card-container md:grid-cols-3">
+            {githubStatCards.map((card, index) => (
+              <StatCard
+                key={index}
+                title={card.title}
+                value={card.value}
+                className={card.className}
+              />
+            ))}
+          </div>
+        </div>
+      </>
+    );
+  } catch (error) {
+    console.error("Error fetching stats:", error);
+    return (
+      <div className="text-center text-red-500 mt-10">
+        Failed to load GitHub stats.
+      </div>
+    );
+  }
+}

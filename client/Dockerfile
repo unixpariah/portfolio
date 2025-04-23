@@ -3,7 +3,7 @@ RUN apk add --no-cache g++ make py3-pip libc6-compat
 WORKDIR /app
 COPY package.json ./
 COPY bun.lock ./
-EXPOSE 3001
+EXPOSE 3000
 
 FROM base AS builder
 WORKDIR /app
@@ -15,7 +15,7 @@ FROM base AS production
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=3001
+ENV PORT=3000
 RUN bun install --frozen-lockfile
 
 RUN addgroup -g 1001 -S nodejs
@@ -32,7 +32,7 @@ CMD bun start
 
 FROM base AS dev
 ENV NODE_ENV=development
-ENV PORT=3001
+ENV PORT=3000
 RUN bun install 
 COPY . .
 CMD bun run dev

@@ -1,0 +1,34 @@
+import ExperienceEntry from "@/components/ui/experience-entry";
+
+export default function ExperiencePage() {
+  return (
+    <>
+      <div className="py-10">
+        <h1 className="text-3xl font-bold">Experience</h1>
+        <h2 className="text-4xl font-bold text-muted-foreground">
+          You need it to get the job, but the job’s what gives it!
+        </h2>
+      </div>
+
+      <ExperienceEntry
+        experiences={[
+          {
+            name: "Znak.pl",
+            position: "Intern",
+            startDate: "Jan. 2022",
+            endDate: "2022",
+            description:
+              "Assisted in assembling and configuring PCs and laptops.",
+          },
+          {
+            name: "Komputronik",
+            position: "Intern",
+            startDate: "Dec. 2020",
+            endDate: "Dec. 2020",
+            description: "Assembled and configured custom PCs and laptops.",
+          },
+        ]}
+      />
+    </>
+  );
+}

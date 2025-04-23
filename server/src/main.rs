@@ -46,8 +46,7 @@ pub struct Language {
 }
 
 static SECRET: LazyLock<String> = LazyLock::new(|| {
-    let secret = std::fs::read_to_string("/home/unixpariah/.config/sops-nix/secrets/github-api")
-        .unwrap_or_default();
+    let secret = std::fs::read_to_string("/run/secrets/github_api").unwrap();
     let secret = secret.trim();
     assert!(!secret.is_empty(), "Github api token must not be empty");
     secret.to_string()
