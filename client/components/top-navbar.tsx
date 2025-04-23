@@ -1,7 +1,5 @@
-"use client";
-
 import Link from "next/link";
-import { Github, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useMobile } from "@/hooks/use-mobile";
@@ -63,7 +61,7 @@ export default function TopNavbar({ onMenuClick }: TopNavbarProps) {
         </div>
         <div className="flex items-center gap-2">
           <Link
-            href="https://github.com"
+            href="https://github.com/unixpariah/portfolio"
             target="_blank"
             rel="noopener noreferrer"
           >

@@ -88,26 +88,28 @@ export default function SkillsPage() {
   return (
     <div>
       <div className="py-10">
-        <h1 className="text-3xl font-bold">Skills & Tools</h1>
+        <h1 className="text-3xl font-bold">Skills &amp; Tools</h1>
+
         <p className="mt-4 text-muted-foreground">
-          As a full-stack Software Engineer, I specialize in building scalable
-          web applications using modern technologies such as Next.js, React, and
-          Tailwind CSS. I'm also expanding my expertise into low-level systems
-          programming and graphics development with Rust, C, and Vulkan. My
-          toolkit spans from frontend frameworks to infrastructure management
-          with Docker and Kubernetes.
+          As a full‑stack Software Engineer, I specialize in building scalable
+          web applications using modern technologies such as&nbsp;Next.js,
+          React, and Tailwind&nbsp;CSS. I&rsquo;m also expanding my expertise
+          into low‑level systems programming and graphics development with Rust,
+          C, and&nbsp;Vulkan. My toolkit spans from frontend frameworks to
+          infrastructure management with Docker and&nbsp;Kubernetes.
         </p>
       </div>
 
       <div className="space-y-12">
         {categories.map((category) => (
           <section key={category.title}>
-            <h2 className="text-xl font-semibold mb-4">{category.title}</h2>
+            <h2 className="mb-4 text-xl font-semibold">{category.title}</h2>
+
             <div className="flex flex-wrap gap-2">
               {category.items.map((item) => (
                 <Badge
                   key={item.title}
-                  className="p-4 py-2 border border-secondary bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+                  className="border border-secondary bg-gray-200 p-4 py-2 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
                 >
                   {Icons[item.icon as keyof typeof Icons]?.({
                     className: "mr-2 size-4",

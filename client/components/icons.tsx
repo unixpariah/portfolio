@@ -1,7 +1,7 @@
 type IconProps = React.HTMLAttributes<SVGElement>;
 
 export const Icons = {
-  actix: (props: IconProps) => (
+  actix: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>Actix</title>
       <path
@@ -10,7 +10,7 @@ export const Icons = {
       />
     </svg>
   ),
-  c: (props: IconProps) => (
+  c: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>C</title>
       <path
@@ -19,7 +19,7 @@ export const Icons = {
       />
     </svg>
   ),
-  helix: (props: IconProps) => (
+  helix: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>Helix</title>
       <path
@@ -28,7 +28,7 @@ export const Icons = {
       />
     </svg>
   ),
-  k3s: (props: IconProps) => (
+  k3s: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>K3s</title>
       <path
@@ -37,7 +37,7 @@ export const Icons = {
       />
     </svg>
   ),
-  lua: (props: IconProps) => (
+  lua: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>Lua</title>
       <path
@@ -46,7 +46,7 @@ export const Icons = {
       />
     </svg>
   ),
-  mdbook: (props: IconProps) => (
+  mdbook: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>mdBook</title>
       <path
@@ -55,7 +55,7 @@ export const Icons = {
       />
     </svg>
   ),
-  neovim: (props: IconProps) => (
+  neovim: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>Neovim</title>
       <path
@@ -64,7 +64,7 @@ export const Icons = {
       />
     </svg>
   ),
-  nixos: (props: IconProps) => (
+  nixos: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>NixOS</title>
       <path
@@ -73,7 +73,7 @@ export const Icons = {
       />
     </svg>
   ),
-  opengl: (props: IconProps) => (
+  opengl: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>OpenGL</title>
       <path
@@ -82,7 +82,7 @@ export const Icons = {
       />
     </svg>
   ),
-  postgres: (props: IconProps) => (
+  postgres: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>PostgreSQL</title>
       <path
@@ -91,7 +91,7 @@ export const Icons = {
       />
     </svg>
   ),
-  rust: (props: IconProps) => (
+  rust: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>Rust</title>
       <path
@@ -100,7 +100,7 @@ export const Icons = {
       />
     </svg>
   ),
-  sqlite: (props: IconProps) => (
+  sqlite: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>SQLite</title>
       <path
@@ -109,7 +109,7 @@ export const Icons = {
       />
     </svg>
   ),
-  vulkan: (props: IconProps) => (
+  vulkan: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>Vulkan</title>
       <path
@@ -118,7 +118,7 @@ export const Icons = {
       />
     </svg>
   ),
-  wayland: (props: IconProps) => (
+  wayland: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>Wayland</title>
       <path
@@ -127,7 +127,7 @@ export const Icons = {
       />
     </svg>
   ),
-  wgpu: (props: IconProps) => (
+  wgpu: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>wgpu</title>
       <path
@@ -136,7 +136,7 @@ export const Icons = {
       />
     </svg>
   ),
-  zig: (props: IconProps) => (
+  zig: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>Zig</title>
       <path
@@ -145,7 +145,7 @@ export const Icons = {
       />
     </svg>
   ),
-  bun: (props: IconProps) => (
+  bun: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>Bun</title>
       <path
@@ -285,7 +285,7 @@ export const Icons = {
       />
     </svg>
   ),
-  git: (props: IconProps) => (
+  git: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>Git</title>
       <path
@@ -294,7 +294,7 @@ export const Icons = {
       />
     </svg>
   ),
-  linux: (props: IconProps) => (
+  linux: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>Linux</title>
       <path
@@ -303,7 +303,7 @@ export const Icons = {
       />
     </svg>
   ),
-  docker: (props: IconProps) => (
+  docker: () => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>Docker</title>
       <path
