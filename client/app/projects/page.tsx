@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import ProjectCard from "@/components/ui/project-card";
 
 export interface Language {
@@ -18,6 +20,8 @@ export interface Project {
 export default async function ProjectsPage() {
   try {
     const res = await fetch("http://server:8000/projects");
+    if (!res.ok) throw new Error("Failed to fetch projects");
+
     const projectsData: Project[] = await res.json();
 
     return (
@@ -33,6 +37,10 @@ export default async function ProjectsPage() {
     );
   } catch (error) {
     console.log("Error fetching projects:", error);
-    return <div className="py-10">Failed to fetch projects</div>;
+    return (
+      <div className="text-center text-red-500 mt-10">
+        Failed to load projects.
+      </div>
+    );
   }
 }

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
-    "start": "bun ./server.js",
+    "start": "bun .next/standalone/server.js",
     "lint": "next lint"
   },
   "dependencies": {

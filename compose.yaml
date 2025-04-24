@@ -1,23 +1,9 @@
 services:
-  traefik:
-    image: traefik:v3.1
-    command:
-      - --api.insecure=true
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=false
-      - --entrypoints.web.address=:80
-    ports:
-      - "80:80"
-      - "8080:8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - web
-
   client:
     build:
       context: ./client
       dockerfile: Dockerfile
+      target: production
       cache_from:
         - client-cache
     image: client-cache
@@ -25,11 +11,6 @@ services:
       - ./client:/app
     ports:
       - "3000:3000"
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.client.entrypoints=web
-      - traefik.http.routers.client.rule=Host(`app.localhost`)
-      - traefik.http.services.client.loadbalancer.server.port=3000
     networks:
       - web
   
@@ -49,11 +30,6 @@ services:
       - github_api
     ports:
       - "8000:8000"
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.api.entrypoints=web
-      - traefik.http.routers.api.rule=Host(`api.localhost`)
-      - traefik.http.services.api.loadbalancer.server.port=8000
     environment:
       - DATABASE_URL=postgres://user:password@db:5432/db?sslmode=disable
     networks:
