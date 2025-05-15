@@ -91,7 +91,7 @@ async fn main() -> std::io::Result<()> {
         let pool = pool.clone();
         tokio::spawn(async {
             let pool = pool;
-            let mut interval = interval(Duration::from_secs(3600));
+            let mut interval = interval(Duration::from_days(1));
             let client = Client::new();
 
             loop {
@@ -136,7 +136,6 @@ async fn main() -> std::io::Result<()> {
                                         repo.get("homepage").and_then(|v| v.as_str()),
                                     );
 
-                                    // Get languages
                                     let lang_res = client
                                         .get(format!(
                                             "https://api.github.com/repos/unixpariah/{}/languages",
