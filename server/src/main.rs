@@ -91,7 +91,7 @@ async fn main() -> std::io::Result<()> {
         let pool = pool.clone();
         tokio::spawn(async {
             let pool = pool;
-            let mut interval = interval(Duration::from_days(1));
+            let mut interval = interval(Duration::from_secs(86400));
             let client = Client::new();
 
             loop {
