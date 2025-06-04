@@ -16,6 +16,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV HOST=0.0.0.0
 RUN bun install --frozen-lockfile
 
 RUN addgroup -g 1001 -S nodejs
@@ -33,6 +34,7 @@ CMD bun start
 FROM base AS dev
 ENV NODE_ENV=development
 ENV PORT=3000
+ENV HOST=0.0.0.0
 RUN bun install 
 COPY . .
 CMD bun run dev
