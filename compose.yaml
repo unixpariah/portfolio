@@ -69,3 +69,4 @@ networks:
 secrets:
   github_api:
     file: /home/unixpariah/.config/sops-nix/secrets/github-api
+  

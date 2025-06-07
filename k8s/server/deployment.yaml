@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portfolio-server
+  namespace: portfolio
+  labels:
+    app: portfolio-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: portfolio-server
+  template:
+    metadata:
+      labels:
+        app: portfolio-server
+    spec:
+        containers:        
+        - name: portfolio-server
+          env:
+            - name: DATABASE_URL
+              value: postgres://user:password@postgres:5432/db?sslmode=disable
+          image: ghcr.io/unixpariah/portfolio-server:prod
+          ports:
+            - containerPort: 8000
+          resources:
+            limits:
+              memory: "1Gi"
+          volumeMounts:
+            - name: github-secret
+              mountPath: /run/secrets/github_api
+              subPath: github_api
+              readOnly: true
+
+        volumes:
+          - name: github-secret
+            secret:
+              secretName: github-api

@@ -36,7 +36,7 @@ interface Stats {
 
 export default async function Stats() {
   try {
-    const res = await fetch("http://server:8000/stats");
+    const res = await fetch("http://portfolio-server.portfolio/api/stats");
     if (!res.ok) throw new Error("Failed to fetch stats");
 
     const stats: Stats = await res.json();

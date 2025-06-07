@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portfolio-client
+  namespace: portfolio
+  labels:
+    app: portfolio-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: portfolio-client
+  template:
+    metadata:
+      labels:
+        app: portfolio-client
+    spec:
+      containers:        
+        - name: portfolio-client
+          env:
+            - name: HOST
+              value: "0.0.0.0"
+          image: ghcr.io/unixpariah/portfolio-client:prod
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              memory: "1Gi"

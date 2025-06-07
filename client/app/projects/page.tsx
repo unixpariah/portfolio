@@ -19,7 +19,7 @@ export interface Project {
 
 export default async function ProjectsPage() {
   try {
-    const res = await fetch("http://server:8000/projects");
+    const res = await fetch("http://portfolio.your-domain.com/api/projects");
     if (!res.ok) throw new Error("Failed to fetch projects");
 
     const projectsData: Project[] = await res.json();
