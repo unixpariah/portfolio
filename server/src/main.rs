@@ -115,7 +115,11 @@ async fn main() -> std::io::Result<()> {
                     match repos_res.json::<Value>().await {
                         Ok(Value::Array(repos)) => {
                             let project_futures = repos.iter().filter_map(|repo| {
-                                if repo.get("fork").and_then(|v| v.as_bool()).unwrap_or(false) {
+                                if repo
+                                    .get("fork")
+                                    .and_then(|v| v.as_bool())
+                                    .unwrap_or_default()
+                                {
                                     return None;
                                 }
 
@@ -236,7 +240,7 @@ async fn main() -> std::io::Result<()> {
                                 hireable: stats_json
                                     .get("hireable")
                                     .and_then(|v| v.as_bool())
-                                    .unwrap_or(false),
+                                    .unwrap_or_default(),
                             };
 
                             if let Err(e) = db::execute(&pool, db::Query::UpdateStats(stats)).await
@@ -255,7 +259,6 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         let cors = Cors::default()
-            .allowed_origin("http://app.localhost")
             .allowed_methods(vec!["POST", "GET"])
             .allowed_headers(vec![
                 actix_web::http::header::AUTHORIZATION,

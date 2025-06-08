@@ -20,7 +20,7 @@ spec:
           env:
             - name: DATABASE_URL
               value: postgres://user:password@postgres:5432/db?sslmode=disable
-          image: ghcr.io/unixpariah/portfolio-server:prod
+          image: ghcr.io/unixpariah/portfolio-server:main-e4199fe
           ports:
             - containerPort: 8000
           resources:

@@ -20,7 +20,7 @@ spec:
           env:
             - name: HOST
               value: "0.0.0.0"
-          image: ghcr.io/unixpariah/portfolio-client:prod
+          image: ghcr.io/unixpariah/portfolio-client:main-e4199fe
           ports:
             - containerPort: 3000
           resources:

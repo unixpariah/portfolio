@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "SERVER_URL=\"0.0.0.0:8000\" next dev --turbopack",
     "build": "next build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
-    "start": "bun ./server.js",
+    "start": "SERVER_URL=\"http://portfolio-server.portfolio\" bun ./server.js",
     "lint": "next lint"
   },
   "dependencies": {
