@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html class="bg-black text-green-300 select-none">
+	<head>
+		<title>OSKAR ROCHOWIAK</title>
+		<link rel="stylesheet" href="/static/output.css">
+
+		<style>
+			.glitch::before,
+			.glitch::after,
+			#bg-grid,
+			.side-bar {
+				will-change: transform;
+			}
+			
+			.glitch { position: relative; font-family: 'Orbitron', monospace; }
+			.glitch::before,
+			.glitch::after {
+				content: attr(data-text);
+				position: absolute;
+				left: 0;
+				top: 0;
+			}
+			.glitch::before { color: #ff00ff; animation: glitch1 2s infinite; mix-blend-mode: screen; }
+			.glitch::after { color: #00ffff; animation: glitch2 2.5s infinite; mix-blend-mode: lighten; }
+			
+			@keyframes glitch1 {
+				20% { transform: translate(-3px,-2px) skew(-2deg); }
+				40% { transform: translate(2px,3px) skew(1deg); }
+				60% { transform: translate(-1px,1px) skew(-1deg); }
+			}
+			
+			@keyframes glitch2 {
+				20% { transform: translate(2px,1px) skew(1deg); }
+				40% { transform: translate(-3px,-2px) skew(-2deg); }
+				60% { transform: translate(1px,-1px) skew(0deg); }
+			}
+			
+			body::before {
+				content: "";
+				position: fixed;
+				inset: 0;
+				pointer-events: none;
+				background: repeating-linear-gradient(
+				to bottom,
+				rgba(255,255,255,0.05) 0 1px,
+				transparent 1px 3px
+				);
+				mix-blend-mode: overlay;
+				z-index: 1;
+			}
+			
+			body::after {
+				content: "";
+				position: fixed;
+				inset: 0;
+				background: url('/static/noise.png');
+				opacity: 0.12;
+				animation: noiseMove 2.5s steps(4) infinite;
+				pointer-events: none;
+				z-index: 1;
+			}
+			
+			@keyframes noiseMove {
+				0% { transform: translate(0,0); }
+				25% { transform: translate(-5%,-3%); }
+				50% { transform: translate(3%,2%); }
+				75% { transform: translate(-2%,3%); }
+				100% { transform: translate(0,0); }
+			}
+			
+			body {
+				background: radial-gradient(circle at center, #0ff 10%, black 80%);
+			}
+			
+			#bg-grid {
+				position: fixed;
+				inset: 0;
+				background-image: linear-gradient(rgba(0,255,255,0.08) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255,0,255,0.08) 1px, transparent 1px);
+				background-size: 40px 40px;
+				animation: drift 25s linear infinite;
+				pointer-events: none;
+				z-index: 0;
+			}
+			
+			@keyframes drift { from { transform: translate(0,0); } to { transform: translate(-100px,-100px); } }
+			
+			.side-bar {
+				position: fixed;
+				top: 0;
+				height: 100vh;
+				width: 90px;
+				opacity: 0.25;
+				z-index: 3;
+				pointer-events: none;
+				background: repeating-linear-gradient(
+				to bottom,
+				rgba(255,0,255,0.25) 0 2px,
+				rgba(0,255,255,0.15) 2px 4px
+				);
+				mix-blend-mode: screen;
+				animation: sideScroll 5s linear infinite;
+			}
+			.side-bar.left { left: 0; }
+			.side-bar.right { right: 0; }
+			@keyframes sideScroll { 0% { background-position-y: 0; } 100% { background-position-y: 300px; } }
+			
+			.repo-card {
+				pointer-events: auto;
+				border: 2px solid #ff0;
+				border-radius: 12px;
+				padding: 20px;
+				background: linear-gradient(135deg, rgba(255,0,255,0.2), rgba(0,255,255,0.2));
+				box-shadow: 0 0 20px #0ff, 0 0 30px #f0f;
+				transition: transform 0.2s ease, box-shadow 0.2s ease;
+			}
+			.repo-card:hover {
+				transform: scale(1.05);
+				box-shadow: 0 0 20px #0ff;
+			}
+			
+			a {
+				text-decoration: none;
+				font-weight: bold;
+				border-radius: 5px;
+				box-shadow: 0 0 10px #ff0 inset;
+				transition: all 0.2s ease;
+			}
+			a:hover {
+				box-shadow: 0 0 20px #0ff, 0 0 40px #f0f inset;
+			}
+		</style>
+	</head>
+	<body class="font-mono tracking-wide">
+
+		<div id="bg-grid"></div>
+		<div class="side-bar left"></div>
+		<div class="side-bar right"></div>
+
+		<div class="min-h-screen px-4 md:px-10 pb-20 relative z-10">
+			<div class="text-center py-16">
+				<h1 class="glitch text-6xl font-bold" data-text="OSKAR.ROCHOWIAK">OSKAR.ROCHOWIAK</h1>
+				<p class="text-pink-400 mt-3 text-sm">~ rust / wayland / graphics programming / k3s ~</p>
+			</div>
+
+			<main class="max-w-3xl mx-auto space-y-6">
+				{% for repo in repos %}
+				<div class="repo-card">
+					<h2 class="text-xl text-green-300 font-bold mb-2">{{ repo.name }}</h2>
+					<p class="text-green-200 text-sm mb-4">{{ repo.description }}</p>
+
+					<div class="flex gap-3">
+						<a href="{{ repo.github }}" target="_blank" class="px-4 py-2 border border-pink-400 text-pink-300 hover:bg-pink-400 hover:text-black transition">
+							GitHub
+						</a>
+
+						{% if let Some(link) = repo.host %}
+						<a href="{{ link }}" target="_blank" class="px-4 py-2 border border-cyan-400 text-cyan-300 hover:bg-cyan-400 hover:text-black transition">
+							Hosted →
+						</a>
+						{% endif %}
+					</div>
+				</div>
+				{% endfor %}
+			</main>
+		</div>
+	</body>
+</html>
