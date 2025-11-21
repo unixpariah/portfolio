@@ -36,7 +36,7 @@ async fn root() -> Html<String> {
         },
         Repo {
             name: "whydotool",
-            description: "Wayland-native command-line automation tool",
+            description: "Wayland-native command-line automation tool ",
             github: "https://forgejo.r0chd.pl/r0chd/whydotool",
             host: None,
         },
